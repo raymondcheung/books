@@ -23,17 +23,24 @@ Upsert:
     <label for="publication_year">Year</label>
     <input title="publication_year" type="number" formControlName="publication_year">
   </div>
+
+  <div>
+    <label for="genre">Genre</label>
+    <input title="genre" type="text" formControlName="genre">
+  </div>
+
   <input type="submit" value="Submit" (click)="submit()">
 </form>
 
 <div *ngIf="errorMsg">{{ errorMsg }}</div>
 
 <table>
-  <tr><th>Book ID</th><th>Title</th><th>Author</th></tr>
+  <tr><th>Book ID</th><th>Title</th><th>Author</th><th>Publication Year</th><th>Genre</th></tr>
   <tr *ngFor="let book of books$ | async">
     <td>{{ book.book_id }}</td>
     <td>{{ book.title }}</td>
     <td>{{ book.author }}</td>
     <td>{{ book.publication_year }}</td>
+    <td>{{ book.genre }}</td>
   </tr>
 </table>

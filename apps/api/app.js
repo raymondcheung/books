@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 
 // Create a new book
 app.post('/books', (req, res) => {
-  const { title, author, publication_year } = req.body;
+  const { title, author, publication_year, genre } = req.body;
   if (!title) {
     console.log('Error empty field supplied: title');
     res.status(400).send('Error empty field supplied: title');
@@ -39,14 +39,19 @@ app.post('/books', (req, res) => {
     res.status(400).send('Error empty field supplied: author');
     return;
   }
+  if (!genre) {
+    console.log('Error empty field supplied: genre');
+    res.status(400).send('Error empty field supplied: genre');
+    return;
+  }
   if (isNaN(publication_year)) {
     console.log('Error empty field supplied: publication_year');
     res.status(400).send('Error empty field supplied: publication_year');
     return;
   }
-  const insertQuery = 'INSERT INTO Books (title, author, publication_year) VALUES (?, ?, ?)';
+  const insertQuery = 'INSERT INTO Books (title, author, publication_year, genre) VALUES (?, ?, ?, ?)';
 
-  db.query(insertQuery, [title, author, publication_year], (err, result) => {
+  db.query(insertQuery, [title, author, publication_year, genre], (err, result) => {
     if (err) {
       console.error('Error creating book: ' + err.stack);
       res.status(500).send('Error creating book');
@@ -102,7 +107,7 @@ app.put('/books/:id',(req, res) => {
     res.status(400).send('Invalid Book ID supplied');
     return;
   }
-  const { title, author, publication_year } = req.body;
+  const { title, author, publication_year, genre } = req.body;
   if (!title) {
     console.log('Error empty field supplied: title');
     res.status(400).send('Error empty field supplied: title');
@@ -113,14 +118,19 @@ app.put('/books/:id',(req, res) => {
     res.status(400).send('Error empty field supplied: author');
     return;
   }
+  if (!genre) {
+    console.log('Error empty field supplied: genre');
+    res.status(400).send('Error empty field supplied: genre');
+    return;
+  }
   if (isNaN(publication_year)) {
     console.log('Error empty field supplied: publication_year');
     res.status(400).send('Error empty field supplied: publication_year');
     return;
   }
-  const updateQuery = 'UPDATE Books SET title = ?, author = ?, publication_year = ? WHERE book_id = ?';
+  const updateQuery = 'UPDATE Books SET title = ?, author = ?, publication_year = ?, genre = ? WHERE book_id = ?';
 
-  db.query(updateQuery, [title, author, publication_year, bookId], (err, result) => {
+  db.query(updateQuery, [title, author, publication_year, genre, bookId], (err, result) => {
     if (err) {
       console.error('Error updating book: ' + err.stack);
       res.status(500).send('Error updating book');

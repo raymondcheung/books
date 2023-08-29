@@ -18,6 +18,7 @@ export class AppComponent implements OnInit {
     title: new FormControl(''),
     author: new FormControl(''),
     publication_year: new FormControl(''),
+    genre: new FormControl(''),
   });
 
   public constructor(
@@ -47,17 +48,21 @@ export class AppComponent implements OnInit {
       title: this.bookForm.get('title')?.value as string,
       author: this.bookForm.get('author')?.value as string,
       publication_year: parseInt(this.bookForm.get('publication_year')?.value as string, 10),
+      genre: this.bookForm.get('genre')?.value as string,
     }
     if (!book.title) {
-      this.errorMsg = "Title should not be empty";
-      return;
+      this.errorMsg += "Title should not be empty.  ";
     }
     if (!book.author) {
-      this.errorMsg = "Author should not be empty";
-      return;
+      this.errorMsg += "Author should not be empty.  ";
+    }
+    if (!book.genre) {
+      this.errorMsg += "Genre should not be empty.  ";
     }
     if (isNaN(book.publication_year)) {
-      this.errorMsg = "Publication Year should not be empty";
+      this.errorMsg += "Publication Year should not be empty.  ";
+    }
+    if (this.errorMsg) {
       return;
     }
     let request;
