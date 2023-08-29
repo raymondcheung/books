@@ -132,28 +132,6 @@ app.put('/books/:id',(req, res) => {
   });
 });
 
-// Delete a book by ID
-app.delete('/books/:id', (req, res) => {
-  const bookId = req.params.id;
-  if (isNaN(bookId)) {
-    console.error('Invalid book id: ' + bookId);
-    res.status(500).send('Invalid Book ID supplied');
-    return;
-  }
-  const deleteQuery = 'DELETE FROM Books WHERE book_id = ?';
-
-  db.query(deleteQuery, [bookId], (err, result) => {
-    if (err) {
-      console.error('Error deleting book: ' + err.stack);
-      res.status(500).send('Error deleting book');
-    } else if (result.affectedRows === 0) {
-      res.status(404).json({ message: 'Book not found3' });
-    } else {
-      res.status(200).json({ message: 'Book deleted successfully' });
-    }
-  });
-});
-
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
