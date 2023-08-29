@@ -1,0 +1,38 @@
+<!-- <a [routerLink]="/">Book List</a>
+<a [routerLink]="/">Book Details</a>
+<a [routerLink]="/">Book List</a>
+<router-outlet></router-outlet> -->
+Insert:
+<form [formGroup]="bookForm">
+  <div>
+    <label for="book_id">Book ID</label>
+    <input type="text" formControlName="book_id">
+  </div>
+
+  <div>
+    <label for="title">Title</label>
+    <input type="text" formControlName="title">
+  </div>
+
+  <div>
+    <label for="author">Author</label>
+    <input type="text" formControlName="author">
+  </div>
+
+  <div>
+    <label for="publication_year">Year</label>
+    <input type="number" formControlName="publication_year">
+  </div>
+  <input type="submit" value="Submit" (click)="submit()">
+</form>
+
+List:
+<table>
+  <tr><th>Book ID</th><th>Title</th><th>Author</th></tr>
+  <tr *ngFor="let book of books$ | async">
+    <td>{{ book.book_id }}</td>
+    <td>{{ book.title }}</td>
+    <td>{{ book.author }}</td>
+    <td>{{ book.publication_year }}</td>
+  </tr>
+</table>
