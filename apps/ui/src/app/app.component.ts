@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Book } from './model/book.model';
-import { Observable, map, of, tap } from 'rxjs';
+import { Observable, catchError, map, of, tap } from 'rxjs';
 import { HttpService } from './services/http.service';
 import { FormControl, FormGroup } from '@angular/forms';
 
@@ -10,6 +10,7 @@ import { FormControl, FormGroup } from '@angular/forms';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  public errorMsg: string;
   public books$: Observable<Book[]>;
 
   public bookForm = new FormGroup({
@@ -25,12 +26,19 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.books$ = this.httpService.getAllBoooks();
+    try {
+      this.books$ = this.httpService.getAllBoooks();
+    } catch (error) {
+      if (typeof error === 'string') {
+        this.errorMsg = error;
+      } else if (error instanceof Error) {
+        this.errorMsg = error.message;
+      }
+    }
   }
 
-
-
   submit(): void {
+    this.errorMsg = "";
     const book: Book = {
       book_id: this.bookForm.get('book_id')?.value || '',
       title: this.bookForm.get('title')?.value as string,
@@ -38,13 +46,21 @@ export class AppComponent implements OnInit {
       publication_year: parseInt(this.bookForm.get('publication_year')?.value as string, 10),
     }
     let request;
-    if (book.book_id) {
-      request = this.httpService.updateBook(book)
-    } else {
-      request = this.httpService.addBook(book);
+    try {
+      if (book.book_id) {
+        request = this.httpService.updateBook(book);
+      } else {
+        request = this.httpService.addBook(book);
+      }
+      request.subscribe(() => {
+        this.books$ = this.httpService.getAllBoooks();
+      });
+    } catch (error) {
+      if (typeof error === 'string') {
+        this.errorMsg = error;
+      } else if (error instanceof Error) {
+        this.errorMsg = error.message;
+      }
     }
-    request.subscribe(() => {
-      this.books$ = this.httpService.getAllBoooks();
-    });
   }
 }

@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
+const { check } = require('express-validator');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -26,7 +27,11 @@ db.connect((err) => {
 app.use(bodyParser.json());
 
 // Create a new book
-app.post('/books', (req, res) => {
+app.post('/books', [
+  check('title', "Title needs to be at least one character").isLength({ min: 1 }).trim().escape(),
+  check('author', "Author needs to be at least three characters").isLength({min: 3}).escape(),
+  check('publication_year', "Publication Year needs to be numeric").isNumeric().trim().escape() // This is treating the year 1 BC, as -1
+], (req, res) => {
   const { title, author, publication_year } = req.body;
   const insertQuery = 'INSERT INTO Books (title, author, publication_year) VALUES (?, ?, ?)';
 
@@ -55,7 +60,9 @@ app.get('/books', (req, res) => {
 });
 
 // Retrieve a book by ID
-app.get('/books/:id', (req, res) => {
+app.get('/books/:id', [
+  param('book_id', "Book ID needs to be numeric value").isNumeric().trim().escape(),
+], (req, res) => {
   const bookId = req.params.id;
   const selectQuery = 'SELECT * FROM Books WHERE book_id = ?';
 
@@ -72,7 +79,12 @@ app.get('/books/:id', (req, res) => {
 });
 
 // Update a book by ID
-app.put('/books/:id', (req, res) => {
+app.put('/books/:id', [
+  param('book_id', "Book ID needs to be numeric value").isNumeric().trim().escape(),
+  check('title', "Title needs to be at least one character").isLength({ min: 1 }).trim().escape(),
+  check('author', "Author needs to be at least three characters").isLength({min: 3}).escape(),
+  check('publication_year', "Publication Year needs to be numeric").isNumeric().trim().escape() // This is treating the year 1 BC, as -1
+], (req, res) => {
   const bookId = req.params.id;
   const { title, author, publication_year } = req.body;
   const updateQuery = 'UPDATE Books SET title = ?, author = ?, publication_year = ? WHERE book_id = ?';

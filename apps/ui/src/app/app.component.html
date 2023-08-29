@@ -6,25 +6,27 @@ Insert:
 <form [formGroup]="bookForm">
   <div>
     <label for="book_id">Book ID</label>
-    <input type="text" formControlName="book_id">
+    <input title="book_id" type="text" formControlName="book_id">
   </div>
 
   <div>
     <label for="title">Title</label>
-    <input type="text" formControlName="title">
+    <input title="title" type="text" formControlName="title">
   </div>
 
   <div>
     <label for="author">Author</label>
-    <input type="text" formControlName="author">
+    <input title="author" type="text" formControlName="author">
   </div>
 
   <div>
     <label for="publication_year">Year</label>
-    <input type="number" formControlName="publication_year">
+    <input title="publication_year" type="number" formControlName="publication_year">
   </div>
   <input type="submit" value="Submit" (click)="submit()">
 </form>
+
+<div *ngIf="errorMsg">{{ errorMsg }}</div>
 
 List:
 <table>
