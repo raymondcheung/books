@@ -39,7 +39,7 @@ app.post('/books', (req, res) => {
     res.status(400).send('Error empty field supplied: author');
     return;
   }
-  if (!publication_year) {
+  if (isNaN(publication_year)) {
     console.log('Error empty field supplied: publication_year');
     res.status(400).send('Error empty field supplied: publication_year');
     return;
@@ -113,7 +113,7 @@ app.put('/books/:id',(req, res) => {
     res.status(400).send('Error empty field supplied: author');
     return;
   }
-  if (!publication_year) {
+  if (isNaN(publication_year)) {
     console.log('Error empty field supplied: publication_year');
     res.status(400).send('Error empty field supplied: publication_year');
     return;

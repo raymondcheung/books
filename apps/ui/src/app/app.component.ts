@@ -56,7 +56,7 @@ export class AppComponent implements OnInit {
       this.errorMsg = "Author should not be empty";
       return;
     }
-    if (!book.publication_year) {
+    if (isNaN(book.publication_year)) {
       this.errorMsg = "Publication Year should not be empty";
       return;
     }
