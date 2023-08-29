@@ -2,7 +2,7 @@
 <a [routerLink]="/">Book Details</a>
 <a [routerLink]="/">Book List</a>
 <router-outlet></router-outlet> -->
-Insert:
+Upsert:
 <form [formGroup]="bookForm">
   <div>
     <label for="book_id">Book ID</label>
@@ -28,7 +28,6 @@ Insert:
 
 <div *ngIf="errorMsg">{{ errorMsg }}</div>
 
-List:
 <table>
   <tr><th>Book ID</th><th>Title</th><th>Author</th></tr>
   <tr *ngFor="let book of books$ | async">

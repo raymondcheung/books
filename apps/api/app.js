@@ -1,7 +1,7 @@
 const express = require('express');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
-const { check } = require('express-validator');
+const { check, param } = require('express-validator');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -27,12 +27,23 @@ db.connect((err) => {
 app.use(bodyParser.json());
 
 // Create a new book
-app.post('/books', [
-  check('title', "Title needs to be at least one character").isLength({ min: 1 }).trim().escape(),
-  check('author', "Author needs to be at least three characters").isLength({min: 3}).escape(),
-  check('publication_year', "Publication Year needs to be numeric").isNumeric().trim().escape() // This is treating the year 1 BC, as -1
-], (req, res) => {
+app.post('/books', (req, res) => {
   const { title, author, publication_year } = req.body;
+  if (!title) {
+    console.log('Error empty field supplied: title');
+    res.status(400).send('Error empty field supplied: title');
+    return;
+  }
+  if (!author) {
+    console.log('Error empty field supplied: author');
+    res.status(400).send('Error empty field supplied: author');
+    return;
+  }
+  if (!publication_year) {
+    console.log('Error empty field supplied: publication_year');
+    res.status(400).send('Error empty field supplied: publication_year');
+    return;
+  }
   const insertQuery = 'INSERT INTO Books (title, author, publication_year) VALUES (?, ?, ?)';
 
   db.query(insertQuery, [title, author, publication_year], (err, result) => {
@@ -64,6 +75,11 @@ app.get('/books/:id', [
   param('book_id', "Book ID needs to be numeric value").isNumeric().trim().escape(),
 ], (req, res) => {
   const bookId = req.params.id;
+  if (isNaN(bookId)) {
+    console.error('Invalid book id: ' + bookId);
+    res.status(400).send('Invalid Book ID supplied');
+    return;
+  }
   const selectQuery = 'SELECT * FROM Books WHERE book_id = ?';
 
   db.query(selectQuery, [bookId], (err, result) => {
@@ -79,14 +95,29 @@ app.get('/books/:id', [
 });
 
 // Update a book by ID
-app.put('/books/:id', [
-  param('book_id', "Book ID needs to be numeric value").isNumeric().trim().escape(),
-  check('title', "Title needs to be at least one character").isLength({ min: 1 }).trim().escape(),
-  check('author', "Author needs to be at least three characters").isLength({min: 3}).escape(),
-  check('publication_year', "Publication Year needs to be numeric").isNumeric().trim().escape() // This is treating the year 1 BC, as -1
-], (req, res) => {
+app.put('/books/:id',(req, res) => {
   const bookId = req.params.id;
+  if (isNaN(bookId)) {
+    console.error('Invalid book id: ' + bookId);
+    res.status(400).send('Invalid Book ID supplied');
+    return;
+  }
   const { title, author, publication_year } = req.body;
+  if (!title) {
+    console.log('Error empty field supplied: title');
+    res.status(400).send('Error empty field supplied: title');
+    return;
+  }
+  if (!author) {
+    console.log('Error empty field supplied: author');
+    res.status(400).send('Error empty field supplied: author');
+    return;
+  }
+  if (!publication_year) {
+    console.log('Error empty field supplied: publication_year');
+    res.status(400).send('Error empty field supplied: publication_year');
+    return;
+  }
   const updateQuery = 'UPDATE Books SET title = ?, author = ?, publication_year = ? WHERE book_id = ?';
 
   db.query(updateQuery, [title, author, publication_year, bookId], (err, result) => {
@@ -104,6 +135,11 @@ app.put('/books/:id', [
 // Delete a book by ID
 app.delete('/books/:id', (req, res) => {
   const bookId = req.params.id;
+  if (isNaN(bookId)) {
+    console.error('Invalid book id: ' + bookId);
+    res.status(500).send('Invalid Book ID supplied');
+    return;
+  }
   const deleteQuery = 'DELETE FROM Books WHERE book_id = ?';
 
   db.query(deleteQuery, [bookId], (err, result) => {

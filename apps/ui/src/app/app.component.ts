@@ -27,7 +27,10 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     try {
-      this.books$ = this.httpService.getAllBoooks();
+      this.books$ = this.httpService.getAllBoooks().pipe(catchError(err => {
+        this.errorMsg = err?.error || err?.message || err;
+        return of([]);
+      }));
     } catch (error) {
       if (typeof error === 'string') {
         this.errorMsg = error;
@@ -45,15 +48,36 @@ export class AppComponent implements OnInit {
       author: this.bookForm.get('author')?.value as string,
       publication_year: parseInt(this.bookForm.get('publication_year')?.value as string, 10),
     }
+    if (!book.title) {
+      this.errorMsg = "Title should not be empty";
+      return;
+    }
+    if (!book.author) {
+      // this.errorMsg = "Author should not be empty";
+      // return;
+    }
+    if (!book.publication_year) {
+      this.errorMsg = "Publication Year should not be empty";
+      return;
+    }
     let request;
     try {
       if (book.book_id) {
-        request = this.httpService.updateBook(book);
+        request = this.httpService.updateBook(book).pipe(catchError(err => {
+          this.errorMsg = err?.error || err?.message || err;
+          return err;
+        }));
       } else {
-        request = this.httpService.addBook(book);
+        request = this.httpService.addBook(book).pipe(catchError(err => {
+          this.errorMsg = err?.error || err?.message || err;
+          return err;
+        }));
       }
       request.subscribe(() => {
-        this.books$ = this.httpService.getAllBoooks();
+        this.books$ = this.httpService.getAllBoooks().pipe(catchError(err => {
+          this.errorMsg = err?.error || err?.message || err;
+          return of([]);
+        }));
       });
     } catch (error) {
       if (typeof error === 'string') {
