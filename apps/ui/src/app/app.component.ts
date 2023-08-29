@@ -53,8 +53,8 @@ export class AppComponent implements OnInit {
       return;
     }
     if (!book.author) {
-      // this.errorMsg = "Author should not be empty";
-      // return;
+      this.errorMsg = "Author should not be empty";
+      return;
     }
     if (!book.publication_year) {
       this.errorMsg = "Publication Year should not be empty";
